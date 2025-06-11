@@ -27,7 +27,7 @@ export default function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  const [updateSuccesss, setUodateSuccess] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
 
@@ -57,11 +57,11 @@ export default function Profile() {
         setFileUploadError(true);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => 
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setFormData({ ...formData, avatar: downloadURL })
         
-      );
-      }
+      });
+    }
     );
   };
 
@@ -88,7 +88,7 @@ export default function Profile() {
       }
 
       dispatch(updateUserSuccess(data));
-      setUodateSuccess(true);
+      setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -141,6 +141,24 @@ export default function Profile() {
     } catch (error) {
       setShowListingsError(true);
     }
+  };
+
+  const handleListingDelete = async (listingId) => {
+     try {
+        const res = await fetch(`/api/listing/delete/${listingId}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (data.success === false) {
+          console.log(data.message);
+          return;
+        }
+
+        setUserListings((prev) => 
+          prev.filter((listing) => listing._id !== listingId));
+     } catch (error) {
+        console.log(error.message);
+     }
   };
 
   return (
@@ -225,7 +243,7 @@ export default function Profile() {
 
       <p className='text-red-700 mt-5'>{error ? error : ''}</p>
       <p className='text-green-700 mt-5'>
-        {updateSuccesss ? 'User is updated successfully!' : ''}
+        {updateSuccess ? 'User is updated successfully!' : ''}
         </p>
         <button onClick={handleShowListings} 
         className='text-green-700 w-full'>Show Listings</button>
@@ -250,11 +268,11 @@ export default function Profile() {
                 <Link className='text-slate-700 font-semibold 
                hover:underline truncate flex-1' to={`/listing/${listing._id}`}
                 >
-                <p c>{listing.name}</p>
+                <p>{listing.name}</p>
                 </Link>
   
                 <div className="flex flex-col item-center">
-                  <button className='text-red-700 uppercase'>Delete</button>
+                  <button onClick={()=>handleListingDelete(listing._id)} className='text-red-700 uppercase'>Delete</button>
                   <button className='text-green-700 uppercase'>Edit</button>
                 </div>
               </div>
