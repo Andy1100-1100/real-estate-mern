@@ -15,8 +15,8 @@ import {
   } from 'react-icons/fa';
 import Contact from '../components/Contact';
 
+SwiperCore.use([Navigation]);
 export default function Listing() {
-    SwiperCore.use([Navigation]);
     const [listing, setListing] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -108,7 +108,7 @@ export default function Listing() {
               </p>
               {listing.offer && (
                 <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                  ${+listing.regularPrice - +listing.discountedPrice}
+                  ${+listing.regularPrice - +listing.discountedPrice} discount
                 </p>
               )}
             </div>
